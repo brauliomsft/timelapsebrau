@@ -1,16 +1,16 @@
 ﻿@*
-//----------------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation. All rights reserved.
-//
-// THIS CODE AND INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND,
-// EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES
-// OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
-//----------------------------------------------------------------------------------
-// The example companies, organizations, products, domain names,
-// e-mail addresses, logos, people, places, and events depicted
-// herein are fictitious.  No association with any real company,
-// organization, product, domain name, email address, logo, person,
-// places, or events is intended or should be inferred.
+    //----------------------------------------------------------------------------------
+    // Copyright (c) Microsoft Corporation. All rights reserved.
+    //
+    // THIS CODE AND INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND,
+    // EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES
+    // OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+    //----------------------------------------------------------------------------------
+    // The example companies, organizations, products, domain names,
+    // e-mail addresses, logos, people, places, and events depicted
+    // herein are fictitious.  No association with any real company,
+    // organization, product, domain name, email address, logo, person,
+    // places, or events is intended or should be inferred.
 *@
 
 @{
@@ -21,35 +21,28 @@
     <h2>Windows Timelapse</h2>
     <h5>Bienvenidos a nuestra galeria!!! Vaya, vaya, Tacubaya, si no conoce...</h5>
     <span>
-        
+
     </span>
+    @Html.ActionLink("First ", "Index", "Home", new { page = 1 }, null)
+    <span> Page number: @ViewBag.PageNumber </span>
+    @Html.ActionLink("Nex > ", "Index", "Home", new { page = ViewBag.PageNumber+1 }, null)
+
 </div>
-
-@*Select Files and Upload: Displays a 'Select Files' button that uses a File Upload control to select files to be uploaded and 
-  calls the JS function: DisplayFilesToUpload() that lists the file name and size for all files to be uploaded. 
-  Also the JS function displays the Upload submit button that calls UploadAsync that uploads the files to Azure Blob Storage.*@
-@using (Html.BeginForm("UploadAsync", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
-{
-
-}
 
 @*loops through all files and displays three items:
     - The Image (159x159) - [Set in .thumb css class]
     - A delete icon (30X30) - [Set in .deleteDiv css class] (~/Images/deleteImage.png) that calls deleteImage JS function
     - A DeleteAll button if there are any items that calls the DeleteAll controller Action*@
-@if (Model != null && Model.Count > 0)
-{
-    foreach (var item in Model)
-    {
-        <div class="imageBlock">
-            <a href="@item" target="_blank"><img class="thumb" src="@item" alt="images"/></a><br />
-          
-        </div>
-    }
+@if (Model != null && Model.Count > 0) {
 
-    using (Html.BeginForm("DeleteAll", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
-    {
+    foreach (var item in Model) {
+        string[] parts = item.ToString().Split('/');
+        string lastPart = parts[parts.Length - 1];
         
+        <div class="imageBlock">
+            <span>@lastPart</span><br />
+            <a href="@item" target="_blank"><img class="thumb" src="@item" alt="images" /></a><br />
+        </div>
     }
 }
 <script>
@@ -60,22 +53,4 @@
             window.location.href = "/Home/Index";
         });
     }
-
-    //Lists the file name and size for all files to be uploaded by updating the <p id="FilesToUpload"></p> control
-    function DisplayFilesToUpload() {
-        var element = document.getElementById("file");
-        var html = "";
-
-        html = "<h3>Image(s) to Upload</h3>"
-        for (var i = 0; i < element.files.length; i++) {
-            html += "<strong>" + (i + 1) + "</strong>. File: ";
-            var file = element.files[i];
-            if ('name' in file) {html += file.name + " (";}
-            if ('size' in file) {html += "size: " + file.size + " bytes)<br>";}
-        }
-
-        html += "<div class='fileUpload btn btn-default'><span>Upload</span><input type='submit' class='upload' value='Upload'/></div>"
-        document.getElementById("FilesToUpload").innerHTML = html;
-    }
-
 </script>
